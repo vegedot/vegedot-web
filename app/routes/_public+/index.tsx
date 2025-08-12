@@ -1,11 +1,8 @@
-import { Separator } from "~/components/ui/separator";
-import type { Route } from "../../+types/root";
+import { Separator } from '~/components/ui/separator'
+import type { Route } from '../../+types/root'
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "home" },
-    { name: "description", content: "home" },
-  ];
+  return [{ title: 'home' }, { name: 'description', content: 'home' }]
 }
 
 export default function Home() {
@@ -14,5 +11,5 @@ export default function Home() {
       <h2 className="text-2xl font-bold">Posts</h2>
       <Separator className="my-4" />
     </>
-  );
+  )
 }

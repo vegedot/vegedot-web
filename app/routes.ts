@@ -5,7 +5,7 @@ import { flatRoutes } from 'remix-flat-routes'
  * @see https://github.com/kiliman/remix-flat-routes
  */
 export default remixRoutesOptionAdapter((defineRoutes) => {
-  return flatRoutes("routes", defineRoutes, {
+  return flatRoutes('routes', defineRoutes, {
     ignoredRouteFiles: ['**/.*'], // Ignore dot files (like .DS_Store)
     //appDir: 'app',
     //routeDir: 'routes',
@@ -13,5 +13,5 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
     //paramPrefixChar: '$',
     //nestedDirectoryChar: '+',
     //routeRegex: /((\${nestedDirectoryChar}[\/\\][^\/\\:?*]+)|[\/\\]((index|route|layout|page)|(_[^\/\\:?*]+)|([^\/\\:?*]+\.route)))\.(ts|tsx|js|jsx|md|mdx)$$/,
-  });
-});
+  })
+})
