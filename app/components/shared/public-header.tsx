@@ -7,7 +7,7 @@ export default function PublicHeader({
   return (
     <header
       className={cn(
-        'bg-primary flex items-center justify-center gap-4 px-4 py-1',
+        'bg-primary flex items-center justify-center gap-4 px-4 py-2',
         className
       )}
       {...props}

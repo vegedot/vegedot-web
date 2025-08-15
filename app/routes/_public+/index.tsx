@@ -8,7 +8,7 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <>
-      <h2 className="text-2xl font-bold">Posts</h2>
+      <h2 className="text-center text-2xl font-bold">POSTS</h2>
       <Separator className="my-4" />
     </>
   )
