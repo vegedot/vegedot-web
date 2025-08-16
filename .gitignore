@@ -8,3 +8,6 @@
 # Storybook
 *storybook.log
 storybook-static
+
+# dotenv
+.env
