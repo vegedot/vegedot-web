@@ -1,39 +1,63 @@
 ---
 name: new-component
-description: shared コンポーネントを作成する
+description: Remix Component モデルで共有 UI コンポーネントを作成する
 user-invocable: true
 allowed-tools: Read, Write, Glob
 ---
 
 # new-component スキル
 
-`$ARGUMENTS` の形式: `<コンポーネント名>`
+`$ARGUMENTS` の形式: `<ComponentName>`
 例: `/new-component ArticleCard`
 
 ## 手順
 
-1. **コンポーネントファイルを作成する** → `app/components/shared/<kebab-case名>.tsx`
+1. **`app/ui/<kebab-case名>.tsx` を作成する**
 
-   テンプレート:
-   ```typescript
-   interface <ComponentName>Props {
-     // TODO: props を定義する
+   基本テンプレート（状態なし）:
+   ```tsx
+   // app/ui/article-card.tsx
+   import type { Handle } from 'remix/component'
+
+   interface ArticleCardProps {
+     title: string
+     publishedAt: string
+     href: string
    }
 
-   export function <ComponentName>({ ... }: <ComponentName>Props): React.ReactElement {
-     return (
+   export function ArticleCard(_handle: Handle, _setup: undefined) {
+     return (props: ArticleCardProps) => (
+       <a href={props.href}>
+         <h2>{props.title}</h2>
+         <time>{props.publishedAt}</time>
+       </a>
+     )
+   }
+   ```
+
+   状態あり（インタラクティブ）:
+   ```tsx
+   export function TogglePanel(_handle: Handle) {
+     // setup フェーズ: 一度だけ実行
+     let open = false
+
+     // render 関数: 更新のたびに実行
+     return (props: { label: string; children: unknown }) => (
        <div>
-         {/* TODO */}
+         <button mix={[on('click', () => { open = !open; _handle.update() })]}>
+           {props.label}
+         </button>
+         {open && <div>{props.children}</div>}
        </div>
      )
    }
    ```
 
 2. **規約を守る**
-   - props の型は `interface` で同ファイルに定義
-   - 戻り値型 `React.ReactElement` を明示
-   - データ取得ロジックは含めない（props で受け取る）
-   - Tailwind CSS クラスは `cn()` でマージする（`~/lib/utils`）
+   - 二段階構成（setup → render 関数を返す）を守る
+   - 状態は setup スコープのプレーンな変数で管理
+   - データ取得はしない（props で受け取る）
+   - ルート固有の UI は `app/ui/` ではなくコントローラーと同居させる
 
 3. **確認する**
    - 作成したファイルパスをユーザーに報告する

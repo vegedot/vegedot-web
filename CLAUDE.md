@@ -1,6 +1,6 @@
 # vegedot-web
 
-microCMS を使った React Router v7 (Remix v3) の Web サイト。
+microCMS を使った Remix v3 の Web サイト。
 
 詳細ルールは @.claude/rules/ を参照。
 
@@ -8,43 +8,45 @@ microCMS を使った React Router v7 (Remix v3) の Web サイト。
 
 | カテゴリ | 技術 |
 |---|---|
-| フレームワーク | React Router v7（SSR）|
+| フレームワーク | Remix v3（`remix` パッケージ）|
 | 言語 | TypeScript（strict 必須）|
-| スタイリング | Tailwind CSS v4 |
+| UI モデル | Remix Component（React **ではない**）|
+| ルーター | `remix/fetch-router`（`route()` 関数で型安全）|
 | CMS | microCMS（`microcms-js-sdk`）|
-| パッケージマネージャー | pnpm（`npm` 禁止）|
-| ルーティング記法 | remix-flat-routes |
+| パッケージマネージャー | npm（`npm install remix@next`）|
 
 ## 開発コマンド
 
 ```bash
-pnpm dev          # 開発サーバー起動（http://localhost:5173）
-pnpm build        # プロダクションビルド
-pnpm typecheck    # 型チェック（react-router typegen + tsc）
-pnpm format:fix   # Prettier 自動修正
+npm run dev       # tsx watch server.ts
+npm run build     # 本番ビルド（未定義の場合は tsx server.ts）
+npm run typecheck # tsc --noEmit
+npm test          # NODE_ENV=test tsx --test
 ```
-
-## 環境変数
-
-`.env.example` をコピーして `.env` を作成する。
-**`VITE_` プレフィックスは microCMS 認証情報に絶対使用禁止**（ブラウザに露出する）。
 
 ## ディレクトリ構成
 
 ```
 app/
-├── components/
-│   └── shared/            # ページ横断コンポーネント
-├── lib/
-│   ├── microcms.server.ts # microCMS クライアント（サーバー専用）
-│   └── utils.ts           # cn() 等のユーティリティ
-└── routes/
-    └── _public+/          # 公開ページ（remix-flat-routes 記法）
+├── assets/        # クライアントエントリポイント
+├── controllers/   # ルートハンドラ + ルート固有 UI
+├── data/          # microCMS クライアント・スキーマ・クエリ
+├── middleware/    # 認証・セッション等のリクエストライフサイクル
+├── ui/            # 複数ルートで共有するコンポーネント
+├── utils/         # クロスレイヤーユーティリティ
+├── routes.ts      # ルート定義（型安全コントラクト）
+└── router.ts      # ルーターセットアップ
+db/                # マイグレーション・SQLite ファイル
+public/            # 静的ファイル
+test/              # 共有テストヘルパー
+tmp/               # ランタイム一時ファイル
+server.ts          # HTTP サーバーエントリポイント
 ```
 
 ## 絶対ルール
 
-- データ取得は必ずサーバーサイド `loader` で行う（`useEffect` + `fetch` 禁止）
-- コンポーネントは props を受け取る純粋な UI のみ
-- `any` 型禁止 → `unknown` を使う
-- `npm` 禁止 → `pnpm` を使う
+- Remix Component を使う（React・Vue・Svelte 禁止）
+- `npm` を使う（`pnpm`・`yarn` 禁止）
+- コンポーネントは必ず二段階構成（setup → render 関数を返す）
+- microCMS API キーはサーバーサイドのみ（`app/data/` 以下に限定）
+- `app/lib/` `app/components/` 等の汎用バケツを作らない

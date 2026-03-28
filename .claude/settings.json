@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(tsx *)",
       "Bash(git status)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -19,8 +22,7 @@
     ],
     "deny": [
       "Bash(rm -rf /)",
-      "Bash(npm install*)",
-      "Bash(npm run*)",
+      "Bash(pnpm *)",
       "Bash(yarn *)"
     ]
   },

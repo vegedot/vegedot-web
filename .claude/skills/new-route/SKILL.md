@@ -1,59 +1,72 @@
 ---
 name: new-route
-description: React Router v7 の新しいルートファイルと対応コンポーネントを作成する
+description: Remix v3 の新しいルートを追加する（routes.ts への追記 + コントローラーファイル作成）
 user-invocable: true
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Bash
 ---
 
 # new-route スキル
 
-`$ARGUMENTS` の形式: `<ルートパス> [エンドポイント名]`
-例: `/new-route articles.$id articles` または `/new-route about`
+`$ARGUMENTS` の形式: `<ルートキー> <URLパターン> [--controller]`
+
+例:
+- `/new-route articles.show /articles/:id` → フラットファイル
+- `/new-route auth.login /auth/login --controller` → コントローラーフォルダ
 
 ## 手順
 
-1. **引数を解析する**
-   - 第1引数: ルートパス（例: `articles.$id`）
-   - 第2引数（省略可）: microCMS エンドポイント名
+1. **`app/routes.ts` を読んで既存のルートを確認する**
 
-2. **ルートファイルを作成する** → `app/routes/_public+/<ルートパス>.tsx`
+2. **`app/routes.ts` にルートを追記する**
 
-   microCMS エンドポイントが指定された場合は loader を含む:
-   ```typescript
-   import type { Route } from './+types/<ルートパス>'
-   import { microcms } from '~/lib/microcms.server'
-   import type { Article } from '~/lib/microcms.server'
+   ```ts
+   export const routes = route({
+     // 既存のルート...
+     articles: {
+       index: '/articles',
+       show: '/articles/:id',   // ← 追記
+     },
+   })
+   ```
 
-   export function meta(_: Route.MetaArgs): Route.MetaDescriptors {
-     return [{ title: '<タイトル>' }]
-   }
+3. **コントローラーファイルを作成する**
 
-   export async function loader({ params }: Route.LoaderArgs): Promise<{ data: Article }> {
-     const data = await microcms.getListDetail<Article>({
-       endpoint: '<エンドポイント>',
+   フラットルート（シンプルなページ）:
+   ```tsx
+   // app/controllers/articles/show.tsx
+   import type { Context } from 'remix/fetch-router'
+   import { microcms } from '../../data/microcms.ts'
+   import type { Article } from '../../data/types.ts'
+
+   export async function handler({ params }: Context): Promise<Response> {
+     const article = await microcms.getListDetail<Article>({
+       endpoint: 'articles',
        contentId: params.id,
      })
-     return { data }
+     return renderHTML(<ShowPage article={article} />)
    }
 
-   export default function Page({ loaderData }: Route.ComponentProps): React.ReactElement {
-     return <div>{/* TODO */}</div>
-   }
-   ```
-
-   CMS なしの静的ページの場合:
-   ```typescript
-   import type { Route } from './+types/<ルートパス>'
-
-   export function meta(_: Route.MetaArgs): Route.MetaDescriptors {
-     return [{ title: '<タイトル>' }]
-   }
-
-   export default function Page(_: Route.ComponentProps): React.ReactElement {
-     return <div>{/* TODO */}</div>
+   function ShowPage({ article }: { article: Article }) {
+     return (handle: Handle) => (
+       <article>
+         <h1>{article.title}</h1>
+       </article>
+     )
    }
    ```
 
-3. **確認する**
-   - `pnpm typecheck` を実行してエラーがないか確認
-   - 作成したファイルのパスをユーザーに報告する
+   コントローラーフォルダ（`--controller` 指定時）:
+   - `app/controllers/<name>/controller.tsx` に作成
+   - ネストは `app/routes.ts` の構造をミラーリング
+
+4. **`app/router.ts` にハンドラを登録する**
+
+   ```ts
+   import { handler as articlesShowHandler } from './controllers/articles/show.tsx'
+
+   router.get(routes.articles.show, articlesShowHandler)
+   ```
+
+5. **確認する**
+   - `npm run typecheck` を実行
+   - 作成したファイルをユーザーに報告する
