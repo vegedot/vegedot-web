@@ -1,6 +1,0 @@
-# Ignore build artifacts
-.react-router
-build
-
-# Ignore package manager files:
-pnpm-lock.yaml
