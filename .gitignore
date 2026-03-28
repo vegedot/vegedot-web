@@ -1,0 +1,14 @@
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# dotenv（.env.example は除く）
+.env
+.env.local
+.env.*.local
+
+# Claude Code（個人設定はコミットしない）
+.claude/settings.local.json

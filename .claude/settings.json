@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git fetch*)",
+      "Bash(git pull*)",
+      "Bash(mkdir -p *)",
+      "Bash(chmod +x *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(find *)",
+      "Bash(which *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(npm install*)",
+      "Bash(npm run*)",
+      "Bash(yarn *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/format-on-save.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-env.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
