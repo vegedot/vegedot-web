@@ -1,24 +1,22 @@
-import { usePosts } from "../../hooks/use-posts";
+import type { Article } from '~/lib/microcms.server'
 
-export default function PostList() {
-  const { posts, isLoading, error } = usePosts();
+interface PostListProps {
+  articles: Article[]
+}
 
-  if (isLoading) {
-    return <div>読み込み中...</div>;
-  }
-
-  if (error) {
-    return <div>エラー: {error.message}</div>;
+export default function PostList({ articles }: PostListProps) {
+  if (articles.length === 0) {
+    return <p className="text-center text-muted-foreground">記事がありません</p>
   }
 
   return (
-    <ul>
-      {posts.map((post) => (
-        <li key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.body}</p>
+    <ul className="space-y-4">
+      {articles.map((article) => (
+        <li key={article.id} className="rounded-lg border p-4">
+          <h2 className="text-xl font-semibold">{article.title}</h2>
+          <p className="mt-2 text-muted-foreground">{article.body}</p>
         </li>
       ))}
     </ul>
-  );
+  )
 }
